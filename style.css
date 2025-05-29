@@ -1,0 +1,572 @@
+/* Reset dan base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: fadeInDown 1s ease-out;
+}
+
+header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+/* Game area */
+.game-area {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    animation: fadeIn 1s ease-out 0.4s both;
+}
+
+/* Score board */
+.score-board {
+    display: flex;
+    justify-content: space-around;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    color: white;
+    box-shadow: 0 8px 25px rgba(238, 90, 36, 0.3);
+}
+
+.score-item {
+    text-align: center;
+    flex: 1;
+}
+
+.score-label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    opacity: 0.9;
+}
+
+.score-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Pattern display */
+.pattern-display {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.pattern-display h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.sequence {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #667eea;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+    padding: 20px;
+    border: 3px dashed #667eea;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.sequence:hover {
+    border-color: #f5576c;
+    transform: scale(1.02);
+}
+
+.pattern-info {
+    margin-top: 10px;
+}
+
+.pattern-type {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+}
+
+/* Input section */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 15px;
+}
+
+.input-section label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #555;
+}
+
+#answer {
+    width: 200px;
+    padding: 15px 20px;
+    border: 3px solid #ddd;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+#answer:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    transform: scale(1.05);
+}
+
+#submit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+#submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+#submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Result section */
+.result-section {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-left: 5px solid #667eea;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.result-section.hidden {
+    display: none;
+}
+
+.result-content h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.result-content p {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.analysis {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #4facfe;
+}
+
+.analysis h4 {
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.controls button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#next-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+}
+
+#hint-btn {
+    background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 216, 155, 0.3);
+}
+
+#reset-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.controls button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.controls button.hidden {
+    display: none;
+}
+
+/* Hint section */
+.hint-section {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 5px solid #ff9a56;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.hint-section.hidden {
+    display: none;
+}
+
+.hint-section h4 {
+    color: #d63031;
+    margin-bottom: 10px;
+}
+
+.hint-section p {
+    color: #555;
+}
+
+/* Leaderboard */
+.leaderboard {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.leaderboard h3 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leaderboard-item {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.leaderboard-item:hover {
+    transform: translateX(5px);
+}
+
+/* Pattern guide */
+.pattern-guide {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.pattern-guide h3 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.guide-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.guide-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.guide-item strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .game-area {
+        padding: 20px;
+    }
+    
+    .score-board {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .sequence {
+        font-size: 2rem;
+        padding: 15px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .controls button {
+        width: 200px;
+    }
+    
+    .guide-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #answer {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .input-section {
+        width: 100%;
+    }
+    
+    #submit-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    header p {
+        font-size: 1rem;
+    }
+    
+    .sequence {
+        font-size: 1.8rem;
+        padding: 10px;
+    }
+    
+    .score-value {
+        font-size: 1.5rem;
+    }
+    
+    .game-area {
+        padding: 15px;
+    }
+    
+    .pattern-guide {
+        padding: 15px;
+    }
+    
+    .leaderboard {
+        padding: 15px;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Loading animation for buttons */
+.controls button:active {
+    transform: scale(0.98);
+}
+
+/* Pulse animation for important elements */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.sequence:focus-within {
+    animation: pulse 2s infinite;
+}
+
+/* Hover effects for interactive elements */
+.pattern-type:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.score-item:hover .score-value {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+/* Focus styles for accessibility */
+button:focus,
+input:focus {
+    outline: 3px solid rgba(102, 126, 234, 0.5);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .container {
+        max-width: none;
+        padding: 0;
+    }
+    
+    .game-area,
+    .leaderboard,
+    .pattern-guide {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}

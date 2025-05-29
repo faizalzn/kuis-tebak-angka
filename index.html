@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Tebak Pola Deret Angka</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 Kuis Tebak Pola Deret Angka</h1>
+            <p>Temukan pola matematika dan tebak angka selanjutnya!</p>
+        </header>
+
+        <div class="game-area">
+            <div class="score-board">
+                <div class="score-item">
+                    <span class="score-label">Skor:</span>
+                    <span id="score" class="score-value">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Streak:</span>
+                    <span id="streak" class="score-value">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Level:</span>
+                    <span id="level" class="score-value">1</span>
+                </div>
+            </div>
+
+            <div class="pattern-display">
+                <h2>Deret Angka:</h2>
+                <div id="sequence" class="sequence">2, 4, 6, 8, ?</div>
+                <div class="pattern-info">
+                    <span id="pattern-type" class="pattern-type">Pola: Belum diketahui</span>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <label for="answer">Masukkan jawaban Anda:</label>
+                <input type="number" id="answer" placeholder="Tebak angka selanjutnya...">
+                <button id="submit-btn" onclick="checkAnswer()">Periksa Jawaban</button>
+            </div>
+
+            <div id="result" class="result-section hidden">
+                <div class="result-content">
+                    <h3 id="result-title">Hasil</h3>
+                    <p id="result-message">Pesan hasil</p>
+                    <div id="analysis" class="analysis">
+                        <h4>Analisis AI:</h4>
+                        <p id="ai-analysis">Analisis pola</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden">Soal Berikutnya</button>
+                <button id="hint-btn" onclick="showHint()">💡 Petunjuk</button>
+                <button id="reset-btn" onclick="resetGame()">🔄 Reset Game</button>
+            </div>
+
+            <div id="hint" class="hint-section hidden">
+                <h4>💡 Petunjuk:</h4>
+                <p id="hint-text">Petunjuk akan muncul di sini</p>
+            </div>
+        </div>
+
+        <div class="leaderboard">
+            <h3>🏆 Leaderboard Lokal</h3>
+            <div id="leaderboard-list" class="leaderboard-list">
+                <div class="leaderboard-item">
+                    <span>1. Pemain - 0 poin</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pattern-guide">
+            <h3>📚 Panduan Pola</h3>
+            <div class="guide-grid">
+                <div class="guide-item">
+                    <strong>Aritmetika:</strong> Selisih tetap (2,4,6,8...)
+                </div>
+                <div class="guide-item">
+                    <strong>Geometri:</strong> Rasio tetap (2,4,8,16...)
+                </div>
+                <div class="guide-item">
+                    <strong>Fibonacci:</strong> Jumlah 2 sebelumnya (1,1,2,3,5...)
+                </div>
+                <div class="guide-item">
+                    <strong>Kuadrat:</strong> Pangkat dua (1,4,9,16...)
+                </div>
+                <div class="guide-item">
+                    <strong>Kubik:</strong> Pangkat tiga (1,8,27,64...)
+                </div>
+                <div class="guide-item">
+                    <strong>Prima:</strong> Bilangan prima (2,3,5,7,11...)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let currentPattern = {};
+        let score = 0;
+        let streak = 0;
+        let level = 1;
+        let questionsAnswered = 0;
+
+        // Pattern definitions
+        const patterns = {
+            arithmetic: {
+                name: "Aritmetika",
+                generate: (start, diff, length) => {
+                    const seq = [start];
+                    for (let i = 1; i < length; i++) {
+                        seq.push(seq[i-1] + diff);
+                    }
+                    return seq;
+                },
+                analyze: (sequence) => {
+                    const diffs = [];
+                    for (let i = 1; i < sequence.length; i++) {
+                        diffs.push(sequence[i] - sequence[i-1]);
+                    }
+                    const isArithmetic = diffs.every(d => d === diffs[0]);
+                    return isArithmetic ? { valid: true, diff: diffs[0] } : { valid: false };
+                }
+            },
+            geometric: {
+                name: "Geometri",
+                generate: (start, ratio, length) => {
+                    const seq = [start];
+                    for (let i = 1; i < length; i++) {
+                        seq.push(seq[i-1] * ratio);
+                    }
+                    return seq;
+                },
+                analyze: (sequence) => {
+                    if (sequence.some(n => n === 0)) return { valid: false };
+                    const ratios = [];
+                    for (let i = 1; i < sequence.length; i++) {
+                        ratios.push(sequence[i] / sequence[i-1]);
+                    }
+                    const isGeometric = ratios.every(r => Math.abs(r - ratios[0]) < 0.001);
+                    return isGeometric ? { valid: true, ratio: ratios[0] } : { valid: false };
+                }
+            },
+            fibonacci: {
+                name: "Fibonacci",
+                generate: (length) => {
+                    const seq = [1, 1];
+                    for (let i = 2; i < length; i++) {
+                        seq.push(seq[i-1] + seq[i-2]);
+                    }
+                    return seq;
+                },
+                analyze: (sequence) => {
+                    for (let i = 2; i < sequence.length; i++) {
+                        if (sequence[i] !== sequence[i-1] + sequence[i-2]) {
+                            return { valid: false };
+                        }
+                    }
+                    return { valid: true };
+                }
+            },
+            square: {
+                name: "Kuadrat",
+                generate: (start, length) => {
+                    const seq = [];
+                    for (let i = 0; i < length; i++) {
+                        seq.push((start + i) * (start + i));
+                    }
+                    return seq;
+                },
+                analyze: (sequence) => {
+                    const roots = sequence.map(n => Math.sqrt(n));
+                    const isSquare = roots.every((r, i) => Math.abs(r - Math.round(r)) < 0.001 && (i === 0 || Math.round(r) === Math.round(roots[0]) + i));
+                    return isSquare ? { valid: true } : { valid: false };
+                }
+            }
+        };
+
+        // Generate random pattern
+        function generatePattern() {
+            const patternTypes = Object.keys(patterns);
+            const randomType = patternTypes[Math.floor(Math.random() * patternTypes.length)];
+            
+            let sequence, answer, hint;
+            
+            switch (randomType) {
+                case 'arithmetic':
+                    const start = Math.floor(Math.random() * 10) + 1;
+                    const diff = Math.floor(Math.random() * 5) + 1;
+                    sequence = patterns.arithmetic.generate(start, diff, 5);
+                    answer = sequence[sequence.length - 1] + diff;
+                    hint = `Pola aritmetika: setiap angka bertambah ${diff}`;
+                    break;
+                    
+                case 'geometric':
+                    const geoStart = Math.floor(Math.random() * 3) + 1;
+                    const ratio = Math.floor(Math.random() * 3) + 2;
+                    sequence = patterns.geometric.generate(geoStart, ratio, 5);
+                    answer = sequence[sequence.length - 1] * ratio;
+                    hint = `Pola geometri: setiap angka dikali ${ratio}`;
+                    break;
+                    
+                case 'fibonacci':
+                    sequence = patterns.fibonacci.generate(6);
+                    answer = sequence[sequence.length - 1] + sequence[sequence.length - 2];
+                    hint = 'Pola Fibonacci: setiap angka adalah jumlah dua angka sebelumnya';
+                    break;
+                    
+                case 'square':
+                    const sqStart = Math.floor(Math.random() * 3) + 1;
+                    sequence = patterns.square.generate(sqStart, 5);
+                    answer = (sqStart + 5) * (sqStart + 5);
+                    hint = `Pola kuadrat: pangkat dua dari ${sqStart}, ${sqStart+1}, ${sqStart+2}, ...`;
+                    break;
+            }
+            
+            return {
+                type: randomType,
+                sequence: sequence.slice(0, -1), // Remove last element for question
+                answer: answer,
+                hint: hint,
+                fullSequence: sequence
+            };
+        }
+
+        // Initialize new question
+        function newQuestion() {
+            currentPattern = generatePattern();
+            document.getElementById('sequence').textContent = currentPattern.sequence.join(', ') + ', ?';
+            document.getElementById('pattern-type').textContent = 'Pola: Belum diketahui';
+            document.getElementById('answer').value = '';
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('hint').classList.add('hidden');
+            document.getElementById('answer').focus();
+        }
+
+        // AI Analysis function
+        function analyzeAnswer(userAnswer, correctAnswer, sequence) {
+            // Check if answer is exactly correct
+            if (userAnswer === correctAnswer) {
+                return {
+                    status: 'correct',
+                    message: 'Jawaban benar! Anda berhasil menebak pola dengan tepat.',
+                    analysis: `Pola yang benar adalah ${patterns[currentPattern.type].name}. ${currentPattern.hint}`
+                };
+            }
+
+            // Analyze if user's answer follows a different but valid pattern
+            const testSequence = [...sequence, userAnswer];
+            
+            // Test different patterns
+            for (const [patternName, patternObj] of Object.entries(patterns)) {
+                if (patternName === currentPattern.type) continue; // Skip correct pattern
+                
+                const analysis = patternObj.analyze(testSequence);
+                if (analysis.valid) {
+                    return {
+                        status: 'logical',
+                        message: 'Jawaban salah, tetapi mengikuti pola logis!',
+                        analysis: `Jawaban Anda mengikuti pola ${patternObj.name}. Namun, pola yang dimaksud adalah ${patterns[currentPattern.type].name}. ${currentPattern.hint}`
+                    };
+                }
+            }
+
+            // Check for simple arithmetic progression with user's answer
+            const userDiffs = [];
+            for (let i = 1; i < testSequence.length; i++) {
+                userDiffs.push(testSequence[i] - testSequence[i-1]);
+            }
+            
+            const lastDiff = userDiffs[userDiffs.length - 1];
+            const avgDiff = userDiffs.reduce((a, b) => a + b, 0) / userDiffs.length;
+            
+            if (Math.abs(lastDiff - avgDiff) <= 2) {
+                return {
+                    status: 'logical',
+                    message: 'Jawaban salah, tetapi menunjukkan pemikiran logis!',
+                    analysis: `Anda mungkin melihat pola aritmetika dengan selisih sekitar ${Math.round(avgDiff)}. Pola sebenarnya: ${currentPattern.hint}`
+                };
+            }
+
+            return {
+                status: 'incorrect',
+                message: 'Jawaban tidak mengikuti pola logis yang jelas.',
+                analysis: `Pola yang benar adalah ${patterns[currentPattern.type].name}. ${currentPattern.hint}`
+            };
+        }
+
+        // Check answer function
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            if (isNaN(userAnswer)) {
+                alert('Mohon masukkan angka yang valid!');
+                return;
+            }
+
+            const result = analyzeAnswer(userAnswer, currentPattern.answer, currentPattern.sequence);
+            
+            // Update score based on result
+            let points = 0;
+            if (result.status === 'correct') {
+                points = 10 + (streak * 2);
+                streak++;
+            } else if (result.status === 'logical') {
+                points = 5;
+                streak = Math.max(0, streak - 1);
+            } else {
+                points = 0;
+                streak = 0;
+            }
+            
+            score += points;
+            questionsAnswered++;
+            
+            // Update level
+            level = Math.floor(questionsAnswered / 5) + 1;
+            
+            // Update display
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('level').textContent = level;
+            
+            // Show result
+            document.getElementById('result-title').textContent = result.message;
+            document.getElementById('result-message').textContent = `Jawaban yang benar: ${currentPattern.answer} (Poin: +${points})`;
+            document.getElementById('ai-analysis').textContent = result.analysis;
+            document.getElementById('pattern-type').textContent = `Pola: ${patterns[currentPattern.type].name}`;
+            
+            document.getElementById('result').classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+            
+            // Update leaderboard
+            updateLeaderboard();
+        }
+
+        // Show hint function
+        function showHint() {
+            document.getElementById('hint-text').textContent = currentPattern.hint;
+            document.getElementById('hint').classList.remove('hidden');
+        }
+
+        // Next question function
+        function nextQuestion() {
+            newQuestion();
+        }
+
+        // Reset game function
+        function resetGame() {
+            if (confirm('Apakah Anda yakin ingin mereset permainan?')) {
+                score = 0;
+                streak = 0;
+                level = 1;
+                questionsAnswered = 0;
+                
+                document.getElementById('score').textContent = score;
+                document.getElementById('streak').textContent = streak;
+                document.getElementById('level').textContent = level;
+                
+                newQuestion();
+            }
+        }
+
+        // Update leaderboard
+        function updateLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('patternQuizLeaderboard') || '[]');
+            const currentTime = new Date().toLocaleString('id-ID');
+            
+            leaderboard.push({
+                score: score,
+                level: level,
+                date: currentTime,
+                questions: questionsAnswered
+            });
+            
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard.splice(5); // Keep top 5
+            
+            localStorage.setItem('patternQuizLeaderboard', JSON.stringify(leaderboard));
+            
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = leaderboard.map((entry, index) => `
+                <div class="leaderboard-item">
+                    <span>${index + 1}. ${entry.score} poin (Level ${entry.level}) - ${entry.date}</span>
+                </div>
+            `).join('') || '<div class="leaderboard-item"><span>Belum ada data</span></div>';
+        }
+
+        // Load leaderboard on start
+        function loadLeaderboard() {
+            updateLeaderboard();
+        }
+
+        // Enter key support
+        document.getElementById('answer').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Initialize game
+        window.onload = function() {
+            newQuestion();
+            loadLeaderboard();
+        };
+    </script>
+</body>
+</html>
